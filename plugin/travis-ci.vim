@@ -89,4 +89,8 @@ function! s:CommitRefComplete(A,L,P) abort
   endif
 endfunction
 
-autocmd User Fugitive command! -nargs=? -buffer -complete=customlist,s:CommitRefComplete GTravisBrowse :execute s:open_browser(s:travis_build_url(s:repository_and_owner(), s:commit_hash(<q-args>)))
+function! GTravisBrowse(commit)
+  execute s:open_browser(s:travis_build_url(s:repository_and_owner(), s:commit_hash(a:commit)))
+endfunction
+
+autocmd User Fugitive command! -nargs=? -buffer -complete=customlist,s:CommitRefComplete GTravisBrowse call GTravisBrowse(<q-args>)
