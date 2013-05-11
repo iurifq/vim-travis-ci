@@ -15,6 +15,14 @@ function! s:repository_and_owner()
   return owner_repository
 endfunction
 
+function! s:last_n_commit_hashes(n)
+  redir => fugitive_output
+  silent exe 'Git log --pretty=\%h -n' . a:n
+  redir END
+  let last_commits = substitute(fugitive_output, '.*-n' . a:n , '', '')
+  return split(last_commits)
+endfunction
+
 function! s:travis_builds(owner_and_repo)
   let url = 'http://api.travis-ci.org/repos/'. a:owner_and_repo . '/builds'
   let response = webapi#http#get(url, '', {})
@@ -73,7 +81,7 @@ function! s:open_browser(url)
 endfunction
 
 function! s:CommitRefComplete(A,L,P) abort
-  let args = ['HEAD^', 'HEAD~']
+  let args = ['HEAD^', 'HEAD~'] + s:last_n_commit_hashes(10)
   if a:A == ''
     return args
   else
