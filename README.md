@@ -1,6 +1,12 @@
 # Travis-ci Vim plugin
 
-This plugin provides `:GTravisBrowse` command to browse the build page of your latest git commit in [Travis CI](http://travis-ci.org).
+This plugin provides `:GTravisBrowse` command to browse the build page of a git commit in [Travis CI](http://travis-ci.org). You can use it without any arguments, which references to the HEAD commit or giving a commit reference as follows.
+
+```vim
+:GTravisBrowse
+:GTravisBrowse HEAD^
+:GTravisBrowse 6cfb346
+```
 
 This command places a request to Travis API so you may have to wait a while. It follows [vim-fugitive](http://github.com/tpope/vim-fugitive) command naming pattern and is only available when the current buffer is inside of a git managed folder.
 

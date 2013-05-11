@@ -1,8 +1,9 @@
-function! s:head_commit_hash()
+function! s:commit_hash(commit)
+  let commit = (a:commit == '') ? 'HEAD' : a:commit
   redir => fugitive_output
-  silent exe 'Git rev-parse HEAD'
+  silent exe 'Git rev-parse "' . commit . '"'
   redir END
-  let commit_hash = substitute(fugitive_output, '.*HEAD.*\([a-z0-9]\{40\}\).*', '\1', '')
+  let commit_hash = substitute(fugitive_output, '.*' . commit . '.*\([a-z0-9]\{40\}\).*', '\1', '')
   return commit_hash
 endfunction
 
@@ -29,7 +30,7 @@ function! s:travis_build_url(owner_and_repo, commit_hash)
   endfor
 endfunction
 
-"Thanks for @mattn for s:get_browser and s:open_browser found in https://github.com/mattn/gist-vim
+"Thanks for @mattn for s:get_browser_command and s:open_browser found in https://github.com/mattn/gist-vim
 
 function! s:get_browser_command()
   let browser_command = get(g:, 'browser_command', '')
@@ -71,4 +72,13 @@ function! s:open_browser(url)
   endif
 endfunction
 
-autocmd User Fugitive command! -buffer GTravisBrowse :execute s:open_browser(s:travis_build_url(s:repository_and_owner(), s:head_commit_hash()))
+function! s:CommitRefComplete(A,L,P) abort
+  let args = ['HEAD^', 'HEAD~']
+  if a:A == ''
+    return args
+  else
+    return filter(args,'v:val[0 : strlen(a:A)-1] ==# a:A')
+  endif
+endfunction
+
+autocmd User Fugitive command! -nargs=? -buffer -complete=customlist,s:CommitRefComplete GTravisBrowse :execute s:open_browser(s:travis_build_url(s:repository_and_owner(), s:commit_hash(<q-args>)))
