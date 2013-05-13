@@ -23,19 +23,8 @@ function! s:last_n_commit_hashes(n)
   return split(last_commits)
 endfunction
 
-function! s:travis_builds(owner_and_repo)
-  let url = 'http://api.travis-ci.org/repos/'. a:owner_and_repo . '/builds'
-  let response = webapi#http#get(url, '', {})
-  return webapi#json#decode(response.content)
-endfunction
-
 function! s:travis_build_url(owner_and_repo, commit_hash)
-  let builds = s:travis_builds(a:owner_and_repo)
-  for build in builds
-    if build['commit'] == a:commit_hash
-      return 'https://travis-ci.org/' . a:owner_and_repo . '/builds/'. build['id']
-    endif
-  endfor
+  return 'http://iurifq.github.io/vim-travis-ci/?repository='. a:owner_and_repo . '&/commit=' . a:commit_hash
 endfunction
 
 "Thanks for @mattn for s:get_browser_command and s:open_browser found in https://github.com/mattn/gist-vim
