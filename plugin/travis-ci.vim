@@ -3,7 +3,7 @@ function! s:commit_hash(commit)
   redir => fugitive_output
   silent exe 'Git rev-parse "' . commit . '"'
   redir END
-  let commit_hash = substitute(fugitive_output, '.*' . commit . '.*\([a-z0-9]\{40\}\).*', '\1', '')
+  let commit_hash = substitute(fugitive_output, '.*' . escape(commit, '~') . '.*\([a-z0-9]\{40\}\).*', '\1', '')
   return commit_hash
 endfunction
 
