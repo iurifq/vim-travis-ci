@@ -1,0 +1,12 @@
+<html>
+  <head>
+    <title>Travis CI</title>
+    <script type="text/javascript" src='scripts/jquery-1.9.1.min.js'> </script>
+    <script type="text/javascript" src='scripts/travis-ci.js'> </script>
+    <script type="text/javascript" charset="utf-8">
+      $.getJSON('http://api.travis-ci.org/repos/'+ query_param('repository') + '/builds?callback=?', travis_callback);
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
