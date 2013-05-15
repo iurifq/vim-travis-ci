@@ -1,30 +1,18 @@
 function! s:commit_hash(commit)
-  let commit = (a:commit == '') ? 'HEAD' : a:commit
-  redir => fugitive_output
-  silent exe 'Git rev-parse "' . commit . '"'
-  redir END
-  let commit_hash = substitute(fugitive_output, '.*' . escape(commit, '~') . '.*\([a-z0-9]\{40\}\).*', '\1', '')
-  return commit_hash
+  return matchstr(system('git rev-parse ' . (a:commit == '' ? 'HEAD' : a:commit)), "[a-z0-9]*")
 endfunction
 
 function! s:repository_and_owner()
-  redir => fugitive_output
-  silent exe 'Git remote -v'
-  redir END
-  let owner_repository = substitute(fugitive_output, '.*origin.*[/:]\(.\+/.\+\)\.git.*', '\1', '')
-  return owner_repository
+  let git_output = system('git remote -v | grep origin.*push')
+  return matchstr(git_output, '//.*[:/]\zs.*/.*\ze\.git (push)')
 endfunction
 
 function! s:last_n_commit_hashes(n)
-  redir => fugitive_output
-  silent exe 'Git log --pretty=\%h -n' . a:n
-  redir END
-  let last_commits = substitute(fugitive_output, '.*-n' . a:n , '', '')
-  return split(last_commits)
+  return split(system('git log --pretty=\%h -n' . a:n))
 endfunction
 
 function! s:travis_build_url(owner_and_repo, commit_hash)
-  return 'http://iurifq.github.io/vim-travis-ci/?repository='. a:owner_and_repo . '&/commit=' . a:commit_hash
+  return 'http://iurifq.github.io/vim-travis-ci/?repository='. a:owner_and_repo . '&commit=' . a:commit_hash
 endfunction
 
 "Thanks for @mattn for s:get_browser_command and s:open_browser found in https://github.com/mattn/gist-vim
