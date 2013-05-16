@@ -4,7 +4,7 @@ endfunction
 
 function! s:repository_and_owner()
   let git_output = system('git remote -v | grep origin.*push')
-  return matchstr(git_output, '//.*[:/]\zs.*/.*\ze\.git (push)')
+  return matchstr(git_output, '.*[:/]\zs.*/.*\ze\.git (push)')
 endfunction
 
 function! s:last_n_commit_hashes(n)
