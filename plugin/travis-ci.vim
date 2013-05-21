@@ -1,3 +1,5 @@
+let s:configfile = expand('~/.vim-travis-ci')
+
 function! s:commit_hash(commit)
   return matchstr(system('git rev-parse ' . (a:commit == '' ? 'HEAD' : a:commit)), "[a-z0-9]*")
 endfunction
@@ -12,7 +14,24 @@ function! s:last_n_commit_hashes(n)
 endfunction
 
 function! s:travis_build_url(owner_and_repo, commit_hash)
-  return 'http://iurifq.github.io/vim-travis-ci/?repository='. a:owner_and_repo . '&commit=' . a:commit_hash
+  return 'https://iurifq.github.io/vim-travis-ci/?repository='. a:owner_and_repo .
+        \ '&commit=' . a:commit_hash . '&public=' . s:travis_public_repo() .
+        \ '&github_token=' . s:github_token()
+endfunction
+
+function! s:travis_public_repo()
+  return substitute(s:system('git config --get vim-travis.public'), "\n", '', '')
+endfunction
+
+function! s:github_token()
+  let auth = ""
+  if filereadable(s:configfile)
+    let str = join(readfile(s:configfile), "")
+    if type(str) == type("")
+      let auth = str
+    endif
+  endif
+  return auth
 endfunction
 
 "Thanks for @mattn for s:get_browser_command and s:open_browser found in https://github.com/mattn/gist-vim
