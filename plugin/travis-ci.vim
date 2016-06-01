@@ -3,8 +3,11 @@ function! s:commit_hash(commit)
 endfunction
 
 function! s:repository_and_owner()
-  let git_output = system('git remote -v | grep origin.*push')
-  return matchstr(git_output, '.*[:/]\zs.*/.*\ze\.git (push)')
+  let git_output = systemlist('git remote -v | grep "origin.*push"')
+  if empty(git_output)
+    throw "Could not get push remote."
+  endif
+  return matchstr(git_output[0], '.*[:/]\zs.*/.*\ze\.git (push)')
 endfunction
 
 function! s:last_n_commit_hashes(n)
